@@ -14,7 +14,7 @@ This spefic program use libraries that probably are not in the victim's computer
 ## Installation
 Here we will use the gcc compiler, and the commands will be the same in both Windows and Linux systems.
 
-First, compile the libraries (if you are under Windows, put in [OS] "win", without quotes, else, if you are under Linux, put "linux", also without quotes):
+First, compile the libraries (if you are under Windows, put in [OS] "win", without quotes, otherwise, if you are under Linux, put "linux", also without quotes):
 ```
 st-crypter/lib> gcc -c -Wall -std=c99 file_[OS].c
 st-crypter/lib> gcc -c -Wall -std=c99 aes.c
