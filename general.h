@@ -23,8 +23,7 @@
 
 #define IV {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
 #define KEY_SIZE 16
-#define CRYPT_ALG CALG_AES_128
-// Obs: If you change the KEY_SIZE and CRYPT_ALG, you will need to change the algoritm in aes.h
+// Obs: If you change the KEY_SIZE, you will need to change the algoritm in aes.h
 // Read the aes.h README for details, it's on the creator's github.
 
 /* Error */
