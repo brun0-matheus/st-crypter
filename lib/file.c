@@ -25,9 +25,11 @@ UNIV_FILE file_open(const char *path, const int mode) {
 }
 
 SIZ file_getSize(UNIV_FILE file) {
-    fseek(file, 0, SEEK_END);
-    SIZ size = ftell(file);
-    rewind(file);
+    struct stat buf;
+    int fd = fileno(file);
+
+    fstat(fd, &buf);
+    SIZ size = buf.st_size;
 
     if(size > MAX_SIZ)
         fatal(0, "FATAL: O tamanho do arquivo excedeu o limite.\n");
@@ -36,7 +38,10 @@ SIZ file_getSize(UNIV_FILE file) {
 }
 
 bool file_exists(const char *path) {
-    return access(path, F_OK) != -1;
+    bool ret = access(path, F_OK) != -1;
+    errno = 0;
+
+    return ret;
 }
 
 void file_read(void *ptr, SIZ size, UNIV_FILE file) {

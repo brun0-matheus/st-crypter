@@ -245,11 +245,14 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    char *fname = argv[1];
+    if(!file_exists(fname))
+      fatal(0, "FATAL: O arquivo %s nao existe.\n", fname);
+
     uint8_t *encContent = NULL;
     SIZ fsize = 0;
 
     // Open file, read it's contents and encrypt them. 
-    char *fname = argv[1];
     encContent = readAndEnc(fname, &fsize, key);
 
     // Find a new file (a non-existent one), generate a stub with the encrypted contents and write it into the file 

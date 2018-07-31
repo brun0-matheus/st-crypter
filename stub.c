@@ -23,6 +23,10 @@
 
 
 void run(const char *path) {
+  #ifdef __unix__
+    chmod(path, 00777);
+  #endif
+
     execl(path, path, (char *) NULL);
 }
 
@@ -33,7 +37,7 @@ int main(void) {
         return 0;
     }
 
-    /* Get the date that came from the main program */
+    /* Get the data that came from the main program */
     uint8_t key[] = KEY;
     uint8_t content[] = ENC_CONTENT;
     uint8_t iv[] = IV;

@@ -1,10 +1,11 @@
-#include "../general.h"
-
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <sys/stat.h>
+
+#include "../general.h"
 
 typedef FILE* UNIV_FILE;
 
