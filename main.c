@@ -207,7 +207,7 @@ void genAndWriteStub(char *outfname, uint8_t *encContent, SIZ fsize, uint8_t *ke
     SIZ iniStubSize = file_getSize(stub); 
     
     // Get the stub code
-    char *stubDef = (char *) smalloc(iniStubSize);
+    char *stubDef = (char *) smalloc(iniStubSize + 1);
     file_read(stubDef, iniStubSize, stub);
     file_close(stub);
 
@@ -237,8 +237,6 @@ void genAndWriteStub(char *outfname, uint8_t *encContent, SIZ fsize, uint8_t *ke
 /* Main */
 
 int main(int argc, char *argv[]) {
-    printf("Identified OS: %s\n", OS_NAME);
-
     uint8_t key[KEY_SIZE] = {0};
     char *path = NULL;
 
@@ -259,7 +257,6 @@ int main(int argc, char *argv[]) {
     genAndWriteStub(outfname, encContent, fsize, key, path);
 
     printf("Output .c file: %s\n\n", outfname);
-
     printf("Commands:\n gcc %s -std=c99 -L./lib -lstatic -o [EXECUTABLE_NAME]\n", outfname);
 
     free(path);
