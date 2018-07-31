@@ -7,23 +7,21 @@ A Scantime Crypter is a program that encrypts a binary, then generates a stub (i
 
 The AES encryption uses, by default, a 128bit (16 bytes) key. If you want to change it, just change the macro *KEY_SIZE* in `general.h` to fit the new key size (it must be 16, 24 or 32) and also change the AES algoritm in `lib/aes.h` (If you don't know how to do this, read the README of this AES implementation under https://github.com/kokke/tiny-AES-c/blob/master/README.md).
 
-The idea of this program is to be cross-platform, so it has a library `file_win` for Windows and `file_linux` for Linux, so pay attention when compiling it! The `stub.c` also has a code for Windows and another for Linux, but both are in the same file and you don't need to specify the OS.
-
 This spefic program use libraries that probably are not in the victim's computer, so it will have to be compiled using static libraries, and not shared ones, so be carefull.
 
 ## Installation
 Here we will use the gcc compiler, and the commands will be the same in both Windows and Linux systems.
 
-First, compile the libraries (if you are under Windows, put in [OS] "win", without quotes, otherwise, if you are under Linux, put "linux", also without quotes):
+First, compile the libraries. They need to be static and using the gnu99 standard (because the fileno() function is used in file.c)
 ```
-st-crypter/lib> gcc -c -Wall -std=c99 file_[OS].c
-st-crypter/lib> gcc -c -Wall -std=c99 aes.c
-st-crypter/lib> ar -cru libstatic.a aes.o file_[OS].o
+st-crypter/lib> gcc -c -Wall -std=gnu99 file.c
+st-crypter/lib> gcc -c -Wall -std=gnu99 aes.c
+st-crypter/lib> ar -cru libstatic.a aes.o file.o
 ```
 
 Now, compile the main program:
 ```
-st-crypter> gcc main.c -std=c99 -L./lib -lstatic -o st-crypter
+st-crypter> gcc main.c -std=gnu99 -L./lib -lstatic -o st-crypter
 ```
 
 And it's done!
