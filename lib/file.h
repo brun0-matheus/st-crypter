@@ -1,27 +1,20 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <sys/stat.h>
+
 #include "../general.h"
 
-#include <stdint.h>
-#include <stdbool.h>
-
-#ifdef WINDOWS
- #include <Windows.h>
- typedef HANDLE* UNIV_FILE;
-#elif defined LINUX
- #include <fcntl.h>
- #include <unistd.h>
- #include <sys/stat.h>
-
- typedef int UNIV_FILE;
-#else
- #error NO_OS_ERROR_MSG
-#endif
+typedef FILE* UNIV_FILE;
 
 typedef unsigned int SIZ;
 #define MAX_SIZ 500 * 1048576  // 500MB
 
-#define M_READ 0
-#define M_WRITE 1
-#define M_WRITE_NEW 2
+#define M_READ 0  // Open file for reading
+#define M_WRITE 1  // Open file for writing and truncate it
+#define M_WRITE_NEW 2  // Open file for writing, create it if doesn't exist, otherwise truncate it
 
 UNIV_FILE file_open(const char *path, const int mode);
 SIZ file_getSize(UNIV_FILE file);

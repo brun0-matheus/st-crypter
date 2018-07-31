@@ -207,7 +207,7 @@ void genAndWriteStub(char *outfname, uint8_t *encContent, SIZ fsize, uint8_t *ke
     SIZ iniStubSize = file_getSize(stub); 
     
     // Get the stub code
-    char *stubDef = (char *) smalloc(iniStubSize);
+    char *stubDef = (char *) smalloc(iniStubSize + 1);
     file_read(stubDef, iniStubSize, stub);
     file_close(stub);
 
@@ -237,8 +237,6 @@ void genAndWriteStub(char *outfname, uint8_t *encContent, SIZ fsize, uint8_t *ke
 /* Main */
 
 int main(int argc, char *argv[]) {
-    printf("Identified OS: %s\n", OS_NAME);
-
     uint8_t key[KEY_SIZE] = {0};
     char *path = NULL;
 
@@ -247,11 +245,14 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    char *fname = argv[1];
+    if(!file_exists(fname))
+      fatal(0, "FATAL: O arquivo %s nao existe.\n", fname);
+
     uint8_t *encContent = NULL;
     SIZ fsize = 0;
 
     // Open file, read it's contents and encrypt them. 
-    char *fname = argv[1];
     encContent = readAndEnc(fname, &fsize, key);
 
     // Find a new file (a non-existent one), generate a stub with the encrypted contents and write it into the file 
@@ -259,7 +260,6 @@ int main(int argc, char *argv[]) {
     genAndWriteStub(outfname, encContent, fsize, key, path);
 
     printf("Output .c file: %s\n\n", outfname);
-
     printf("Commands:\n gcc %s -std=c99 -L./lib -lstatic -o [EXECUTABLE_NAME]\n", outfname);
 
     free(path);
