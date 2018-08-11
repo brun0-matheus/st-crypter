@@ -1,3 +1,5 @@
+#define MAIN_FILE
+
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,31 +40,47 @@ void *smalloc(size_t size) {
 /* Parse args funcions */
 
 void randomKey(uint8_t key[KEY_SIZE]) {
+    setCurName("randomKey");
+
     srand(time(NULL));
     for(int i = 0; i < KEY_SIZE; i++) {
         uint8_t value = rand() % UINT8_MAX;
         key[i] = value;
     }
+
+    rmCurName();
 }
 
 
 void addKey(const char *s, uint8_t *key) {
+    setCurName("addKey");
+
     UNIV_FILE file = file_open(s, M_READ);
     file_read(key, KEY_SIZE, file);
     file_close(file);
+
+    rmCurName();
 }
 
 
 void addPath(const char *s, char **path) {
+    setCurName("addPath");
+
     SIZ size = strlen(s) + 1;
     *path = (char *) smalloc(size); 
     strcpy(*path, s);
+
+    rmCurName();
 }
 
 
 bool parseArgs(int argc, char *argv[], uint8_t *key, char **path) {
-    if(argc < 2 || argc % 2 == 1)
+    setCurName("parseArgs");
+
+    if(argc < 2 || argc % 2 == 1) {
+        rmCurName();
         return false;
+    }
 
     bool keySet = false, pathSet = false;
     for(int i = 0; i < 4; i+=2) {
@@ -84,6 +102,7 @@ bool parseArgs(int argc, char *argv[], uint8_t *key, char **path) {
     if(!pathSet)
         addPath(DEF_EXE_PATH_NAME, path);
 
+    rmCurName();
     return true;
 }
 
@@ -91,6 +110,8 @@ bool parseArgs(int argc, char *argv[], uint8_t *key, char **path) {
 /* Read file functions */
 
 uint8_t *encrypt(const uint8_t *iniData, SIZ *iniSize, uint8_t key[KEY_SIZE]) {
+    setCurName("encrypt");
+
     uint8_t *data = NULL;
     SIZ size = *iniSize;
 
@@ -110,11 +131,15 @@ uint8_t *encrypt(const uint8_t *iniData, SIZ *iniSize, uint8_t key[KEY_SIZE]) {
     AES_CBC_encrypt_buffer(&context, data, size);
 
     *iniSize = size;
+
+    rmCurName();
     return data;
 }
 
 
 uint8_t *readAndEnc(char *fname, SIZ *fsize, uint8_t *key) {
+    setCurName("readAndEnc");
+
     UNIV_FILE file = file_open(fname, M_READ);
     *fsize = file_getSize(file);
 
@@ -127,6 +152,7 @@ uint8_t *readAndEnc(char *fname, SIZ *fsize, uint8_t *key) {
     uint8_t *ret = encrypt(content, fsize, key);
     free(content);
 
+    rmCurName();
     return ret;
 }
 
@@ -134,6 +160,8 @@ uint8_t *readAndEnc(char *fname, SIZ *fsize, uint8_t *key) {
 /* Output file functions */
 
 void findNewFile(char *dest) {
+    setCurName("findNewFile");
+
     char temp[OUT_FNAME_SIZE] = {0};
     int i;
     
@@ -145,13 +173,16 @@ void findNewFile(char *dest) {
             break;
     }
     if(i > MAX_OUT_FNAME_NUM)
-        fatal(0, "FATAL: Could not find a valid number for the stub.\n")
+        fatal(0, "FATAL: Could not find a valid number for the stub's file.\n")
     
     strcpy(dest, temp);
+    rmCurName();
 }
 
 
 char *genStubData(uint8_t *enc, SIZ iniSize, uint8_t *key, char *path, SIZ *stubSize) {
+    setCurName("genStubData");
+
     // Get the max size of the new stub
     SIZ baseSize = strlen("#define ENC_CONTENT {}\n#define ENC_SIZE ______ \n#define KEY {}\n#define PATH \"\"\n");
     baseSize += 4 * iniSize + 4 * KEY_SIZE + strlen(path) + 10;
@@ -196,11 +227,13 @@ char *genStubData(uint8_t *enc, SIZ iniSize, uint8_t *key, char *path, SIZ *stub
     strcat(p, path);
     strcat(p, "\"\n");
 
+    rmCurName();
     return p;
 }
 
 
 void genAndWriteStub(char *outfname, uint8_t *encContent, SIZ fsize, uint8_t *key, char *path) {
+    setCurName("genAndWriteStub");
     findNewFile(outfname);
 
     UNIV_FILE stub = file_open("stub.c", M_READ);
@@ -231,12 +264,15 @@ void genAndWriteStub(char *outfname, uint8_t *encContent, SIZ fsize, uint8_t *ke
 
     free(stubDef);
     free(stubData);
+    rmCurName();
 }
 
 
 /* Main */
 
 int main(int argc, char *argv[]) {
+    setCurName("main");
+
     uint8_t key[KEY_SIZE] = {0};
     char *path = NULL;
 
@@ -247,7 +283,7 @@ int main(int argc, char *argv[]) {
 
     char *fname = argv[1];
     if(!file_exists(fname))
-      fatal(0, "FATAL: The file %s doesn't exist.\n", fname);
+      fatal(0, "FATAL: The file '%s' doesn't exist.\n", fname);
 
     uint8_t *encContent = NULL;
     SIZ fsize = 0;
@@ -264,5 +300,7 @@ int main(int argc, char *argv[]) {
 
     free(path);
     free(encContent);
+
+    rmCurName();
     return 0;
 }

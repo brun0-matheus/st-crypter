@@ -19,7 +19,7 @@ UNIV_FILE file_open(const char *path, const int mode) {
 
     UNIV_FILE file = fopen(path, m);
     if(file == NULL)
-        fatal(1, "FATAL: Could not open the file.\n");
+        fatal(1, "FATAL: Could not open the file.\n", path);
     
     return file;
 }
