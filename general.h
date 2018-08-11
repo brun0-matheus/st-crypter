@@ -12,9 +12,20 @@
 
 /* Error */
 
+#ifdef MAIN_FILE
+ char curNames[10][101] = {0};
+ int cnPos = -1;
+#else
+ extern char curNames[10][101];
+ extern int cnPos;
+#endif
+
 #define PRINT_ERROR 1
 
 #if defined PRINT_ERROR && PRINT_ERROR != 0
- #define error() {printf("Error code: %d \n%s\n", errno, strerror(errno));}
- #define fatal(er, ...) { if(PRINT_ERROR) { fprintf(stderr, __VA_ARGS__);  if(er) error(); exit(1); }}
+ #define setCurName(n) strncpy(curNames[++cnPos], n, 101)
+ #define rmCurName() memset(curNames[cnPos--], 0, 101)
+ #define error() {fprintf(stderr, "Error code: %d \n%s\n", errno, strerror(errno));}
+ #define fatal(er, ...) { if(PRINT_ERROR) { fprintf(stderr, "[%s] ", curNames[cnPos]); fprintf(stderr, __VA_ARGS__); \
+                          if(er) error(); exit(1); }}
 #endif
