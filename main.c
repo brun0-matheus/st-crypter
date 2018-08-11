@@ -28,7 +28,7 @@ void help() {
 void *smalloc(size_t size) {
     void *p = malloc(size);
     if(p == NULL)
-        fatal(1, "FATAL: Nao foi possivel alocar %zu bytes.\n", size)
+        fatal(1, "FATAL: Could not allocate %zu bytes.\n", size)
     
     memset(p, 0, size);
     return p;
@@ -145,7 +145,7 @@ void findNewFile(char *dest) {
             break;
     }
     if(i > MAX_OUT_FNAME_NUM)
-        fatal(0, "FATAL: Nao foi possivel achar um numero valido para o stub.\n")
+        fatal(0, "FATAL: Could not find a valid number for the stub.\n")
     
     strcpy(dest, temp);
 }
@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
 
     char *fname = argv[1];
     if(!file_exists(fname))
-      fatal(0, "FATAL: O arquivo %s nao existe.\n", fname);
+      fatal(0, "FATAL: The file %s doesn't exist.\n", fname);
 
     uint8_t *encContent = NULL;
     SIZ fsize = 0;

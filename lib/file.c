@@ -14,12 +14,12 @@ UNIV_FILE file_open(const char *path, const int mode) {
             strcpy(m, "w+b");
             break;
         default:
-            fatal(0, "FATAL: Modo %d desconhecido.\n", mode);
+            fatal(0, "FATAL: Unknown mode %d.\n", mode);
     }
 
     UNIV_FILE file = fopen(path, m);
     if(file == NULL)
-        fatal(1, "FATAL: Nao foi possivel abrir o arquivo.\n");
+        fatal(1, "FATAL: Could not open the file.\n");
     
     return file;
 }
@@ -32,7 +32,7 @@ SIZ file_getSize(UNIV_FILE file) {
     SIZ size = buf.st_size;
 
     if(size > MAX_SIZ)
-        fatal(0, "FATAL: O tamanho do arquivo excedeu o limite.\n");
+        fatal(0, "FATAL: The file's size exceeded the limit.\n");
 
     return size;
 }
@@ -49,7 +49,7 @@ void file_read(void *ptr, SIZ size, UNIV_FILE file) {
 
     ssize_t ret = read(fd, ptr, size);
     if(ret == -1)
-        fatal(1, "FATAL: Nao foi possivel ler os primeiros %u bytes do arquivo.\n", size);
+        fatal(1, "FATAL: Could not read the first %u bytes from the file.\n", size);
     
     rewind(file);
 }
@@ -59,7 +59,7 @@ void file_write(const void *ptr, SIZ size, UNIV_FILE file) {
 
     ssize_t ret = write(fd, ptr, size);
     if(ret == -1)
-        fatal(1, "FATAL: Nao foi possivel escrever %u bytes no arquivo.\n", size);
+        fatal(1, "FATAL: Could not write %u bytes into the file.\n", size);
     
     rewind(file);
 }
