@@ -12,16 +12,16 @@ This spefic program use libraries that probably are not in the victim's computer
 ## Installation
 Here we will use the gcc compiler, and the commands will be the same in both Windows and Linux systems.
 
-First, compile the libraries. They need to be static and use the gnu99 standard (because the function fileno() is used in file.c):
+First, compile the libraries. They need to be static and use the c99 standard:
 ```
-st-crypter/lib> gcc -c -Wall -std=gnu99 file.c
-st-crypter/lib> gcc -c -Wall -std=gnu99 aes.c
+st-crypter/lib> gcc -c -Wall -std=c99 file.c
+st-crypter/lib> gcc -c -Wall -std=c99 aes.c
 st-crypter/lib> ar -cru libstatic.a aes.o file.o
 ```
 
 Now, compile the main program:
 ```
-st-crypter> gcc main.c -Wall -std=gnu99 -L./lib -lstatic -o st-crypter
+st-crypter> gcc main.c -Wall -std=c99 -L./lib -lstatic -o st-crypter
 ```
 
 And it's done!
