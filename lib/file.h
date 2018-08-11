@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <fcntl.h>
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
@@ -7,7 +8,7 @@
 
 #include "../general.h"
 
-typedef FILE* UNIV_FILE;
+typedef int UNIV_FILE;
 
 typedef unsigned int SIZ;
 #define MAX_SIZ 500 * 1048576  // 500MB

@@ -1,24 +1,24 @@
 #include "file.h"
 
 UNIV_FILE file_open(const char *path, const int mode) {
-    char m[5] = {0};
+    int oflag = O_BINARY;
 
     switch(mode) {
         case M_READ:
-            strcpy(m, "rb");
+            oflag |= O_RDONLY;
             break;
         case M_WRITE:
-            strcpy(m, "wb");
+            oflag |= O_WRONLY;
             break;
         case M_WRITE_NEW:
-            strcpy(m, "w+b");
+            oflag |= O_WRONLY | O_CREAT;
             break;
         default:
             fatal(0, "FATAL: Modo %d desconhecido.\n", mode);
     }
 
-    UNIV_FILE file = fopen(path, m);
-    if(file == NULL)
+    UNIV_FILE file = open(path, oflag);
+    if(file == -1)
         fatal(1, "FATAL: Nao foi possivel abrir o arquivo.\n");
     
     return file;
@@ -26,9 +26,8 @@ UNIV_FILE file_open(const char *path, const int mode) {
 
 SIZ file_getSize(UNIV_FILE file) {
     struct stat buf;
-    int fd = fileno(file);
 
-    fstat(fd, &buf);
+    fstat(file, &buf);
     SIZ size = buf.st_size;
 
     if(size > MAX_SIZ)
@@ -45,25 +44,21 @@ bool file_exists(const char *path) {
 }
 
 void file_read(void *ptr, SIZ size, UNIV_FILE file) {
-    int fd = fileno(file);
-
-    ssize_t ret = read(fd, ptr, size);
+    ssize_t ret = read(file, ptr, size);
     if(ret == -1)
         fatal(1, "FATAL: Nao foi possivel ler os primeiros %u bytes do arquivo.\n", size);
     
-    rewind(file);
+    lseek(file, 0, SEEK_SET);
 }
 
 void file_write(const void *ptr, SIZ size, UNIV_FILE file) {
-    int fd = fileno(file);
-
-    ssize_t ret = write(fd, ptr, size);
+    ssize_t ret = write(file, ptr, size);
     if(ret == -1)
         fatal(1, "FATAL: Nao foi possivel escrever %u bytes no arquivo.\n", size);
     
-    rewind(file);
+    lseek(file, 0, SEEK_SET);
 }
 
 void file_close(UNIV_FILE file) {
-    fclose(file);
+    close(file);
 }
