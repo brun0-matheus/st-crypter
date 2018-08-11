@@ -1,9 +1,10 @@
 /* All the data needed for the stub run that cames from the gen program goes here */
 
+#define MAIN_FILE
 #include <unistd.h>
 #include <string.h>
 
-#include "general.h"
+//#include "general.h"
 #include "lib/aes.h"
 #include "lib/file.h"
 
