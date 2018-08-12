@@ -12,19 +12,19 @@ This spefic program use libraries that probably are not in the victim's computer
 ## Installation
 Here we will use the gcc compiler, and the commands will be the same in both Windows and Linux systems.
 
-First, compile the libraries. They need to be static and use the c99 standard:
+First, compile the libraries. You can use `make library`. They need to be static and use the c99 standard:
 ```
 st-crypter/lib> gcc -c -Wall -std=c99 file.c
 st-crypter/lib> gcc -c -Wall -std=c99 aes.c
 st-crypter/lib> ar -cru libstatic.a aes.o file.o
 ```
 
-Now, compile the main program:
+Now, compile the main program. You can use `make`:
 ```
 st-crypter> gcc main.c -Wall -std=c99 -L./lib -lstatic -o st-crypter
 ```
 
-And it's done!
+And it's done! To remove the compiled binaries, you can use `make clean` or delete them manually.
 
 ## How to use
 After it is compiled, you just run the program passing the filename of the binary. You can use the option --key \<file\> to set a key that is located in \<file\>. If you don't use this option, the key will be random. You also can pass the option --path \<path\> to set the output path of the binary that will be dropped by the stub. If you don't pass this option, the path will be the one defined in `main.c` by the macro *DEF_EXE_PATH_NAME*.
