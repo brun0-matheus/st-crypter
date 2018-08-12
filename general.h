@@ -3,6 +3,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+/* OS Detection (Just detect Unix-like systems) */
+#if (defined __unix__) || (defined unix) || (defined __linux__) || (defined linux)
+ #define UNIX
+#endif
+
 /* Crypto configs */
 
 #define IV {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
@@ -13,7 +18,7 @@
 /* Error */
 
 #ifdef MAIN_FILE
- char curNames[10][101] = {0};
+ char curNames[10][101] = {{0}};
  int cnPos = -1;
 #else
  extern char curNames[10][101];

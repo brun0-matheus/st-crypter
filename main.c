@@ -295,6 +295,10 @@ int main(int argc, char *argv[]) {
     char outfname[OUT_FNAME_SIZE] = {0};
     genAndWriteStub(outfname, encContent, fsize, key, path);
 
+  #ifdef UNIX 
+    chmod(outfname, 00444);
+  #endif
+
     printf("Output .c file: %s\n\n", outfname);
     printf("Commands:\n gcc %s -std=c99 -L./lib -lstatic -o [EXECUTABLE_NAME]\n", outfname);
 

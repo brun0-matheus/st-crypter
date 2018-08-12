@@ -24,7 +24,7 @@
 
 
 void run(const char *path) {
-  #if (defined __unix__) || (defined unix) || (defined __linux__) || (defined linux)
+  #ifdef UNIX 
     chmod(path, 00777);
   #endif
 
